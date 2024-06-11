@@ -19,6 +19,7 @@ const Add = () => {
       id: Date.now(),
       title,
       description,
+      status: "Ongoing",
     };
     let newobj = [...record, obj];
     localStorage.setItem("users", JSON.stringify(newobj));
