@@ -11,6 +11,8 @@ const Add = () => {
     : [];
 
   const [record, setRecord] = useState(data);
+  const [edit, setEdit] = useState("");
+  const [single, setSingle] = useState("");
 
   const handleSubmit = (h) => {
     h.preventDefault();
@@ -21,10 +23,29 @@ const Add = () => {
       description,
       status: "Ongoing",
     };
-    let newobj = [...record, obj];
-    localStorage.setItem("users", JSON.stringify(newobj));
-    setTitle("");
-    setDescription("");
+    if (edit) {
+      let newrec = [...record];
+      let editrec = newrec.map((val) => {
+        if (val.id === edit) {
+          return {
+            ...val,
+            title,
+            description,
+          };
+        }
+        return val;
+      });
+      localStorage.setItem("users", JSON.stringify(editrec));
+      setRecord(editrec);
+      setEdit(" ");
+      setSingle(" ");
+      alert("Record Updated");
+    } else {
+      let newobj = [...record, obj];
+      localStorage.setItem("users", JSON.stringify(newobj));
+      setTitle("");
+      setDescription("");
+    }
   };
 
   return (

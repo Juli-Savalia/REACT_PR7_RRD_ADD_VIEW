@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { FaBook } from "react-icons/fa";
@@ -12,6 +12,11 @@ const View = () => {
 
   const [record, setRecord] = useState(data);
   const [mdelete, setMdelete] = useState([]);
+  const [edit, setEdit] = useState("");
+  const [single, setSingle] = useState("");
+  const [mstatus, setMstatus] = useState([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
   // del single user
   const DeleteUser = (id) => {
@@ -68,6 +73,49 @@ const View = () => {
     }
   };
 
+  //multiple status updated
+
+  const mulstatushandleChecked = (id, checked) => {
+    let all = [...mstatus];
+    if (checked) {
+      all.push(id);
+    } else {
+      all = all.filter((val) => val.id != id);
+    }
+    setMstatus(all);
+    // setMstatus([]);
+  };
+
+  const MulStatus = () => {
+    if (mstatus.length > 0) {
+      let st = record.map((val) => {
+        if (mstatus.includes(val.id)) {
+          if (val.status === "Ongoing") {
+            val.status = "Completed";
+          } else {
+            val.status = "Ongoing";
+          }
+        }
+        return val;
+      });
+      setRecord(st);
+      localStorage.setItem("users", JSON.stringify(st));
+      alert("Status updated successfully...");
+      setMstatus("");
+    }
+  };
+
+  //edit
+  const EditUser = (id) => {
+    let s = record.find((val) => val.id == id);
+    setEdit(s.id);
+    setSingle(s);
+  };
+  useEffect(() => {
+    setTitle(single.title);
+    setDescription(single.description);
+  }, [single]);
+
   return (
     <div className="container py-5">
       <button className="btn btn-primary my-4">
@@ -89,6 +137,11 @@ const View = () => {
               <th scope="col">
                 <button onClick={() => MULDEL()} className="border-0 ">
                   MULDEL
+                </button>
+              </th>
+              <th scope="col">
+                <button onClick={() => MulStatus()} className="border-0 ">
+                  MulStatus
                 </button>
               </th>
             </tr>
@@ -140,6 +193,23 @@ const View = () => {
                       onChange={(e) =>
                         muldelhandleChecked(r.id, e.target.checked)
                       }
+                    />
+                  </td>
+                  <td>
+                    {/*  <input
+                      type="checkbox"
+                      checked={mstatus.includes(r.id)}
+                      onChange={(e) =>
+                        (r.id, e.target.checked)
+                      }
+                    /> */}
+                    <input
+                      type="checkbox"
+                      checked={mstatus.includes(r.id)}
+                      onChange={(e) =>
+                        mulstatushandleChecked(r.id, e.target.checked)
+                      }
+                      // checked={mstatus.includes(r.id)}
                     />
                   </td>
                 </tr>
